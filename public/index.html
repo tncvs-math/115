@@ -32,6 +32,10 @@
     <button type="submit">取消</button>
   </form>
 
+  <h2>管理</h2>
+  <button onclick="clearAll()">清除所有預訂資料</button>
+
+
   <script>
     async function fetchGifts() {
       const res = await fetch('/gifts');
@@ -132,6 +136,15 @@
       alert(result.message);
       e.target.reset();
       fetchGifts();
+    });
+
+    document.getElementById('clearAll').addEventListener('click', async () => {
+      if (confirm('你確定要清除所有預訂紀錄嗎？')) {
+        const res = await fetch('/clear', { method: 'POST' });
+        const result = await res.json();
+        alert(result.message);
+        fetchGifts();
+      }
     });
 
     fetchGifts();
