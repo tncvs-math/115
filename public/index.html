@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>114數學科命題表</title>
+  <title>數學科命題表</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
     h1, h2 { color: #333; }
@@ -15,7 +15,7 @@
   </style>
 </head>
 <body>
-  <h1>114數學科命題表</h1>
+  <h1>數學科命題表</h1>
   <div id="giftsContainer"></div>
 
   <h2>預訂</h2>
@@ -33,7 +33,7 @@
   </form>
 
   <h2>管理</h2>
-  <button onclick="clearAll()">清除所有預訂資料</button>
+  <button onclick="clearAll()">清除預訂資料</button>
 
 
   <script>
@@ -136,6 +136,16 @@
       alert(result.message);
       e.target.reset();
       fetchGifts();
+    });
+
+    async function clearAll() {
+      if (!confirm('你確定要清除所有預訂資料嗎？')) return;
+      const res = await fetch('/clear', {
+        method: 'POST'
+      });
+      const result = await res.json();
+      alert(result.message);
+      fetchGifts(); // 重新載入表格
     });
 
     fetchGifts();
