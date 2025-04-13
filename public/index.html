@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title id="pageTitle">數學科命題表</title>
+  <title>114數學科命題表</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
     h1, h2 { color: #333; }
@@ -12,11 +12,10 @@
     .multi { color: red; font-weight: bold; }
     form { margin-top: 20px; }
     small { color: #666; }
-    button.clear { background-color: red; color: white; padding: 5px 10px; margin-top: 10px; }
   </style>
 </head>
 <body>
-  <h1 id="pageHeader">數學科命題表</h1>
+  <h1>114數學科命題表</h1>
   <div id="giftsContainer"></div>
 
   <h2>預訂</h2>
@@ -33,51 +32,45 @@
     <button type="submit">取消</button>
   </form>
 
-  <button class="clear" id="clearAll">清除所有預訂資料</button>
-
   <script>
-    // 自動標題年份
-    const now = new Date();
-    const baseYear = 2025; // 2025年對應民國114年
-    const offset = now.getFullYear() - baseYear;
-    const displayYear = 114 + offset;
-    document.getElementById('pageTitle').innerText = `${displayYear}數學科命題表`;
-    document.getElementById('pageHeader').innerText = `${displayYear}數學科命題表`;
-
     async function fetchGifts() {
       const res = await fetch('/gifts');
       const gifts = await res.json();
 
       const levels = [1, 2, 3];
-      const giftNames = [...new Set(gifts.filter(g => !['3-5','3-7'].includes(g.id)).map(g => g.name))];
+      const giftNames = [...new Set(gifts.filter(g => g.level !== 0).map(g => g.name))];
+      const excludedIds = ['3-5', '3-7'];
 
       const container = document.getElementById('giftsContainer');
       container.innerHTML = '<h2>總覽</h2>';
       const table = document.createElement('table');
 
+      // 表頭
       const headerRow = document.createElement('tr');
       headerRow.innerHTML = `<th>年級 \\ 項目</th>` + giftNames.map(name => `<th>${name}</th>`).join('');
       table.appendChild(headerRow);
 
+      // 主表格
       levels.forEach(level => {
         const row = document.createElement('tr');
         row.innerHTML = `<td>${level} 年級</td>`;
 
         giftNames.forEach((name, index) => {
           const giftId = `${level}-${index + 1}`;
-          if (giftId === '3-5' || giftId === '3-7') {
-            row.innerHTML += '<td></td>';
-            return;
-          }
-
           const gift = gifts.find(g => g.id === giftId);
-          const reserved = gift?.reservedBy || [];
-          const cellContent = reserved.length > 1
-            ? `<span class="multi">${reserved.join(', ')}</span>`
-            : reserved.join(', ') || '';
 
           const td = document.createElement('td');
-          td.innerHTML = `${cellContent}${cellContent ? '<br>' : ''}<small>(${gift.id})</small>`;
+
+          if (!gift || excludedIds.includes(giftId)) {
+            td.innerHTML = '-';
+          } else {
+            const reserved = gift.reservedBy;
+            const reservedText = reserved.length > 1
+              ? `<span class="multi">${reserved.join(', ')}</span>`
+              : reserved.join(', ') || '';
+            td.innerHTML = `${reservedText}${reservedText ? '<br>' : ''}<small>(${giftId})</small>`;
+          }
+
           row.appendChild(td);
         });
 
@@ -86,28 +79,34 @@
 
       container.appendChild(table);
 
-      // 額外項目
-      const extras = gifts.filter(g => g.level === 0); // 額外項目 level = 0
-      if (extras.length) {
-        const extraDiv = document.createElement('div');
-        extraDiv.innerHTML = '<h2>額外項目</h2>';
-        const ul = document.createElement('ul');
-        extras.forEach(g => {
-          const li = document.createElement('li');
-          const reserved = g.reservedBy.length > 1
-            ? `<span class="multi">${g.reservedBy.join(', ')}</span>`
-            : g.reservedBy.join(', ');
-          li.innerHTML = `${g.name}：${reserved || '尚未預訂'} <small>(${g.id})</small>`;
-          ul.appendChild(li);
-        });
-        extraDiv.appendChild(ul);
-        container.appendChild(extraDiv);
-      }
+      // 額外項目（分開呈現）
+      const extra = document.createElement('div');
+      extra.innerHTML = `<h2>其他項目</h2>`;
+      const extraTable = document.createElement('table');
+      const extraHeader = document.createElement('tr');
+      extraHeader.innerHTML = `<th>項目</th><th>預訂</th><th>編號</th>`;
+      extraTable.appendChild(extraHeader);
+
+      ['4-1', '4-2'].forEach(id => {
+        const gift = gifts.find(g => g.id === id);
+        if (gift) {
+          const reservedText = gift.reservedBy.length > 1
+            ? `<span class="multi">${gift.reservedBy.join(', ')}</span>`
+            : gift.reservedBy.join(', ');
+          const row = document.createElement('tr');
+          row.innerHTML = `<td>${gift.name}</td><td>${reservedText}</td><td>${gift.id}</td>`;
+          extraTable.appendChild(row);
+        }
+      });
+
+      extra.appendChild(extraTable);
+      container.appendChild(extra);
     }
 
+    // 表單事件
     document.getElementById('reserveForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const userName = document.getElementById('userName').value;
+      const userName = document.getElementById('userName').value.trim();
       const giftId = document.getElementById('giftId').value.trim();
       const res = await fetch('/reserve', {
         method: 'POST',
@@ -116,12 +115,13 @@
       });
       const result = await res.json();
       alert(result.message);
+      e.target.reset();
       fetchGifts();
     });
 
     document.getElementById('removeForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const userName = document.getElementById('removeName').value;
+      const userName = document.getElementById('removeName').value.trim();
       const giftId = document.getElementById('removeGiftId').value.trim();
       const res = await fetch('/remove', {
         method: 'POST',
@@ -130,16 +130,8 @@
       });
       const result = await res.json();
       alert(result.message);
+      e.target.reset();
       fetchGifts();
-    });
-
-    document.getElementById('clearAll').addEventListener('click', async () => {
-      if (confirm('你確定要清除所有預訂紀錄嗎？')) {
-        const res = await fetch('/clear', { method: 'POST' });
-        const result = await res.json();
-        alert(result.message);
-        fetchGifts();
-      }
     });
 
     fetchGifts();

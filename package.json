@@ -13,5 +13,13 @@
     "body-parser": "^2.2.0",
     "express": "^5.1.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tncvs-math/115.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tncvs-math/115/issues"
+  },
+  "homepage": "https://github.com/tncvs-math/115#readme",
   "description": ""
 }
