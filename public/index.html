@@ -138,15 +138,6 @@
       fetchGifts();
     });
 
-    document.getElementById('clearAll').addEventListener('click', async () => {
-      if (confirm('你確定要清除所有預訂紀錄嗎？')) {
-        const res = await fetch('/clear', { method: 'POST' });
-        const result = await res.json();
-        alert(result.message);
-        fetchGifts();
-      }
-    });
-
     fetchGifts();
   </script>
 </body>

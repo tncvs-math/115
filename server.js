@@ -61,12 +61,6 @@ app.post('/remove', (req, res) => {
   }
 });
 
-//一鍵清除
-app.post('/clear', (req, res) => {
-  gifts.forEach(g => g.reservedBy = []);
-  res.json({ success: true, message: '所有預訂資料已清除' });
-});
-
 app.listen(port, () => {
   console.log(`伺服器啟動於 http://localhost:${port}`);
 });
