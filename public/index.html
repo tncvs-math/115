@@ -15,7 +15,7 @@
   </style>
 </head>
 <body>
-  <h1>數學科命題表</h1>
+  <h1 id="title"></h1>
   <div id="giftsContainer"></div>
 
   <h2>預訂</h2>
@@ -33,10 +33,15 @@
   </form>
 
   <h2>管理</h2>
-  <button onclick="clearAll()">清除預訂資料</button>
+  <button id="clearAll()">清除預訂資料</button>
 
 
   <script>
+    // 自動顯示年份標題
+    const now = new Date();
+    const year = now.getFullYear() - 1911;
+    document.getElementById('title').innerText = `${year} 數學科命題表`;
+
     async function fetchGifts() {
       const res = await fetch('/gifts');
       const gifts = await res.json();
