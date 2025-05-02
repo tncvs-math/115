@@ -12,6 +12,34 @@
     .multi { color: red; font-weight: bold; }
     form { margin-top: 20px; }
     small { color: #666; }
+
+    /* 加粗左側 3 欄 */
+    #giftsContainer table tr > th:nth-child(2),
+    #giftsContainer table tr > th:nth-child(3),
+    #giftsContainer table tr > th:nth-child(4),
+    #giftsContainer table tr > td:nth-child(2),
+    #giftsContainer table tr > td:nth-child(3),
+    #giftsContainer table tr > td:nth-child(4) {
+      border: 2px solid black;
+    }
+
+    /* 加粗右側 3 欄 */
+    #giftsContainer table tr > th:nth-child(6),
+    #giftsContainer table tr > th:nth-child(7),
+    #giftsContainer table tr > th:nth-child(8),
+    #giftsContainer table tr > td:nth-child(6),
+    #giftsContainer table tr > td:nth-child(7),
+    #giftsContainer table tr > td:nth-child(8) {
+      border: 2px solid black;
+    }
+
+    /* 加粗下方「其他項目」整張表格 */
+    #giftsContainer > div:last-of-type table,
+    #giftsContainer > div:last-of-type table th,
+    #giftsContainer > div:last-of-type table td {
+      border: 2px solid black;
+    }
+
   </style>
 </head>
 <body>
