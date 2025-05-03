@@ -32,12 +32,6 @@
     #giftsContainer table tr > td:nth-child(9) {
       border: 2px solid black;
     }
-
-    /* 加粗下方「其他項目」中「特色招生」那一列 */
-    #giftsContainer > div:last-of-type table tr:last-of-type td {
-      border: 2px solid black;
-    }
-
   </style>
 </head>
 <body>
@@ -60,7 +54,6 @@
 
   <h2>管理</h2>
   <button id="clearAll">清除預訂資料</button>
-
 
   <script>
     // 自動顯示年份標題
@@ -128,8 +121,21 @@
           const reservedText = gift.reservedBy.length > 1
             ? `<span class="multi">${gift.reservedBy.join(', ')}</span>`
             : gift.reservedBy.join(', ');
+
           const row = document.createElement('tr');
-          row.innerHTML = `<td>${gift.name}</td><td>${reservedText}</td><td>${gift.id}</td>`;
+
+          if (id === '4-2') {
+            row.innerHTML = `
+              <td style="border: 2px solid black;">${gift.name}</td>
+              <td style="border: 2px solid black;">${reservedText}</td>
+              <td style="border: 2px solid black;">${gift.id}</td>`;
+          } else {
+            row.innerHTML = `
+              <td>${gift.name}</td>
+              <td>${reservedText}</td>
+              <td>${gift.id}</td>`;
+          }
+
           extraTable.appendChild(row);
         }
       });
